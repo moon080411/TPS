@@ -31,6 +31,14 @@ public:
 public:
 	void AttachWeapon(TSubclassOf<class AWeapon> NewWeapon);
 
+public:
+	void StartReloading();
+	void FinishReloading();
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = Animation)
+	bool bIsReload = false;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	TSubclassOf<class AWeapon> WeaponClass;
@@ -52,6 +60,7 @@ public:
 	void Input_Turn(const FInputActionValue& InputValue);
 	void Input_Run(const FInputActionValue& InputValue);
 	void Input_Fire(const FInputActionValue& InputValue);
+	void Input_Reload(const FInputActionValue& InputValue);
 
 protected:
 	UPROPERTY(EditAnywhere, Category= Input)
@@ -70,6 +79,8 @@ protected:
 	TObjectPtr<class UInputAction> RunAction;
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<class UInputAction> FireAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<class UInputAction> ReloadAction;
 	#pragma endregion
 
 };

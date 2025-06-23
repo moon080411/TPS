@@ -35,6 +35,7 @@ public:
 	virtual void StopFire();
 	virtual void Reloading();
 	virtual void FinishReloading();
+	void PlayHitEffect(FTransform HitTransform);
 
 protected:
 	void FireWithProjectile(TWeakObjectPtr<class ATPSCharacter> OwnerCharacter);
@@ -71,6 +72,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Properties)
 	EFireType FireType = EFireType::EF_Projectile;
+
+	UPROPERTY(EditAnywhere, Category = HitEffect)
+	TObjectPtr<class UParticleSystem> HitEffect;
 
 private:
 	FTimerHandle FireTimerHandle;
