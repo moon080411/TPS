@@ -2,6 +2,7 @@
 
 
 #include "Enemy/TPSEnemy.h"
+#include "Animation/EnemyAnimInstance.h"
 
 // Sets default values
 ATPSEnemy::ATPSEnemy()
@@ -18,6 +19,15 @@ ATPSEnemy::ATPSEnemy()
 		GetMesh()->SetRelativeScale3D(FVector(0.84f));
 	}
 
+	//Animation
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceRef(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Enemy/ABP_Enemy.ABP_Enemy_C'"));
+	if (AnimInstanceRef.Succeeded())
+	{
+		GetMesh()->SetAnimClass(AnimInstanceRef.Class);
+	}
+
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +35,7 @@ void ATPSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetHp(MaxHp);
 }
 
 // Called every frame
@@ -39,5 +50,55 @@ void ATPSEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+float ATPSEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	SetHp(CurrentHp - Damage);
+	if (CurrentHp > 0)
+	{
+		Hit();
+	}
+	else
+	{
+		Dead();
+	}
+
+	return Damage;
+}
+
+void ATPSEnemy::SetHp(float NewHp)
+{
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, MaxHp);
+}
+
+void ATPSEnemy::Hit()
+{
+	UEnemyAnimInstance* EnemyAnimInstance = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+	if (EnemyAnimInstance)
+	{
+		EnemyAnimInstance->PlayHitMontage();
+	}
+}
+
+void ATPSEnemy::Dead()
+{
+	UEnemyAnimInstance* EnemyAnimInstance = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+	if (EnemyAnimInstance)
+	{
+		EnemyAnimInstance->PlayDeadMontage();
+	}
+
+	SetActorEnableCollision(false);
+
+	FTimerHandle DeadTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda(
+		[&]()
+		{
+			Destroy();
+		}
+	),
+		5.0f, false);
 }
 

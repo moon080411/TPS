@@ -55,7 +55,7 @@ ATPSCharacter::ATPSCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
-	static ConstructorHelpers::FClassFinder<AWeapon> WeaponRef(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_Weapon.BP_Weapon'"));
+	static ConstructorHelpers::FClassFinder<AWeapon> WeaponRef(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_Weapon.BP_Weapon_C'"));
 	if (WeaponRef.Succeeded())
 	{
 		WeaponClass = WeaponRef.Class;
@@ -237,6 +237,8 @@ void ATPSCharacter::Input_Run(const FInputActionValue& InputValue)
 
 void ATPSCharacter::Input_Fire(const FInputActionValue& InputValue)
 {
+	if (bIsReload)
+		return;
 	UTPSAnimInstance* AnimInstance = Cast<UTPSAnimInstance>(GetMesh()->GetAnimInstance());
 	if (AnimInstance == nullptr)
 		return;

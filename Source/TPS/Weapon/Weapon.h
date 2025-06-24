@@ -55,6 +55,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class USkeletalMeshComponent> MeshComponent;
 
+	UPROPERTY(EditAnywhere, Category = HitEffect)
+	TObjectPtr<class UParticleSystem> HitEffect;
+
 	UPROPERTY(EditAnywhere, Category = Properties)
 	int32 AmmoMaxCount = 30;
 
@@ -71,10 +74,10 @@ protected:
 	float FireInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = Properties)
-	EFireType FireType = EFireType::EF_Projectile;
+	float AttackDamage = 30.0f;
 
-	UPROPERTY(EditAnywhere, Category = HitEffect)
-	TObjectPtr<class UParticleSystem> HitEffect;
+	UPROPERTY(EditAnywhere, Category = Properties)
+	EFireType FireType = EFireType::EF_Projectile;
 
 private:
 	FTimerHandle FireTimerHandle;
